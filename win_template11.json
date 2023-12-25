@@ -1,0 +1,69 @@
+{
+    "variables": {
+        "region": "{{ env `AWS_REGION` }}",
+        "vpc_id": "{{ env `AWS_VPC_ID` }}",
+        "name": "winsrv2016-amd64-base"
+    },
+    "builders": [{
+        "ami_name": "{{ user `name` }}",
+        "communicator": "winrm",
+        "instance_type": "t2.medium",
+        "region": "{{ user `region` }}",
+        "spot_price_auto_product": "Windows (Amazon VPC)",
+        "spot_price": "auto",
+        "type": "amazon-ebs",
+        "user_data_file": "{{ template_dir }}/bootstrap/aws/userdata/bootstrap-aws.txt",
+        "vpc_id": "{{ user `vpc_id` }}",
+        "windows_password_timeout": "30m",
+        "winrm_insecure": true,
+        "winrm_timeout": "30m",
+        "winrm_use_ssl": true,
+        "winrm_username": "Administrator",
+        "ami_block_device_mappings": [{
+            "delete_on_termination": true,
+            "device_name": "/dev/sda1",
+            "volume_size": 50,
+            "volume_type": "gp2"
+        }],
+        "launch_block_device_mappings": [{
+            "delete_on_termination": true,
+            "device_name": "/dev/sda1"
+        }],
+        "run_tags": {
+            "Name": "Packer Builder (Windows 2016)"
+        },
+        "source_ami_filter": {
+            "filters": {
+                "name": "Windows_Server-2016-English-Full-Base-*"
+            },
+            "owners": ["801119661308"],
+            "most_recent": true
+        },
+        "tags": {
+            "Name": "{{user `name`}}-{{ isotime | clean_ami_name }}",
+            "Version": "{{ isotime | clean_ami_name }}"
+        }
+    }],
+    "provisioners": [
+        {
+            "type": "powershell",
+            "elevated_user": "Administrator",
+            "elevated_password": "{{ .WinRMPassword }}",
+            "inline": [
+                "C:\\ProgramData\\Amazon\\EC2-Windows\\Launch\\Scripts\\InitializeInstance.ps1 -Schedule",
+                "C:\\ProgramData\\Amazon\\EC2-Windows\\Launch\\Scripts\\SysprepInstance.ps1 -NoShutdown",
+                "Write-Host 'Some test output #1...'",
+                "Write-Host 'Some test output #2...'",
+                "Write-Host 'Some test output #3...'"
+            ]
+        },
+        {
+            "type": "powershell",
+            "elevated_user": "Administrator",
+            "elevated_password": "{{ .WinRMPassword }}",
+            "scripts": [
+                "{{ template_dir }}/provisioners/powershell/test.ps1"
+            ]
+        }
+    ]
+}
