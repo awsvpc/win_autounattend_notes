@@ -1,0 +1,28 @@
+{
+    "builders": [
+        {
+            "type": "amazon-ebs",
+            "region": "us-west-2",
+            "vpc_id": "redacted",
+            "subnet_id": "redacted",
+            "security_group_id": "redacted",
+            "instance_type": "t3a.large",
+            "ami_name": "tester {{timestamp}}",
+            "user_data_file": "./SetUpWinRM.ps1",
+            "communicator": "winrm",
+            "winrm_username": "twper",
+            "winrm_password": "SuperS3cr3t!!!!",
+            "winrm_insecure": true,
+            "associate_public_ip_address": true,
+            "winrm_port": 5985,
+            "winrm_timeout": "15m",
+            "source_ami_filter": {
+                "filters": {
+                  "name": "Windows_Server-2016-English-Full-Base-*"
+                },
+                "owners": ["801119661308"],
+                "most_recent": true
+            }
+        }
+    ]
+}
