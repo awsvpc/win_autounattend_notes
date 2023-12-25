@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<unattend xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:schemas-microsoft-com:unattend">
+  <settings pass="specialize">
+    <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <ComputerName>CARoot</ComputerName>
+      <RegisteredOwner>Bob</RegisteredOwner>
+      <RegisteredOrganization>Minions will take over Inc.</RegisteredOrganization>
+    </component>
+    <component name="Microsoft-Windows-TCPIP" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <Interfaces>
+        <Interface wcm:action="add">
+          <Identifier>Ethernet</Identifier>
+          <IPv4Settings>
+            <DhcpEnabled>false</DhcpEnabled>
+            <RouterDiscoveryEnabled>false</RouterDiscoveryEnabled>
+            <Metric>10</Metric>
+          </IPv4Settings>
+          <UnicastIPAddresses>
+            <IpAddress wcm:action="add" wcm:keyValue="1">10.1.0.221/24</IpAddress>
+          </UnicastIPAddresses>
+          <Routes>
+            <Route wcm:action="add">
+              <Identifier>1</Identifier>
+              <Prefix>0.0.0.0/0</Prefix>
+              <Metric>10</Metric>
+              <NextHopAddress>10.1.0.1</NextHopAddress>
+            </Route>
+          </Routes>
+        </Interface>
+      </Interfaces>
+    </component>
+    <component name="Microsoft-Windows-DNS-Client" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <Interfaces>
+        <Interface wcm:action="add">
+          <Identifier>Ethernet</Identifier>
+          <EnableAdapterDomainNameRegistration>false</EnableAdapterDomainNameRegistration>
+          <DisableDynamicUpdate>false</DisableDynamicUpdate>
+          <DNSDomain>minions.org</DNSDomain>
+          <DNSServerSearchOrder>
+            <IpAddress wcm:action="add" wcm:keyValue="1">10.1.0.220</IpAddress>
+          </DNSServerSearchOrder>
+        </Interface>
+      </Interfaces>
+      <UseDomainNameDevolution>true</UseDomainNameDevolution>
+      <DNSDomain>minions.org</DNSDomain>
+    </component>
+  </settings>
+  <settings pass="oobeSystem">
+    <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <UserAccounts>
+        <AdministratorPassword>
+          <Value>TQBpAG4AaQBvAG4AcwA4ADYANwA1ADMAMAA5AEEAZABtAGkAbgBpAHMAdAByAGEAdABvAHIAUABhAHMAcwB3AG8AcgBkAA==</Value>
+          <PlainText>false</PlainText>
+        </AdministratorPassword>
+      </UserAccounts>
+      <OOBE>
+        <SkipMachineOOBE>true</SkipMachineOOBE>
+        <HideEULAPage>true</HideEULAPage>
+      </OOBE>
+      <FirstLogonCommands>
+        <SynchronousCommand wcm:action="add">
+          <Order>1</Order>
+          <Description>Enable local Windows Remote Management</Description>
+          <CommandLine>%windir%\system32\winrm.cmd quickconfig /quiet</CommandLine>
+        </SynchronousCommand>
+        <SynchronousCommand wcm:action="add">
+          <Order>2</Order>
+          <Description>Start DSC Configuration</Description>
+          <CommandLine>%windir%\System32\WindowsPowerShell\v1.0\powershell.exe -nologo -command "Start-DSCConfiguration -Path 'C:\Windows\Panther\MOF' -verbose -wait -force }</CommandLine>
+        </SynchronousCommand>
+        <SynchronousCommand wcm:action="add">
+          <Order>3</Order>
+          <Description>Inform Host Of Ready State</Description>
+          <CommandLine>%windir%\system32\reg.exe add "HKLM\Software\Microsoft\Virtual Machine\Guest" /V SystemStatus /T REG_SZ /D Ready</CommandLine>
+        </SynchronousCommand>
+      </FirstLogonCommands>
+      <AutoLogon>
+        <Password>
+          <Value>TQBpAG4AaQBvAG4AcwA4ADYANwA1ADMAMAA5AFAAYQBzAHMAdwBvAHIAZAA=</Value>
+          <PlainText>false</PlainText>
+        </Password>
+        <Enabled>true</Enabled>
+        <LogonCount>1</LogonCount>
+        <Username>Administrator</Username>
+      </AutoLogon>
+    </component>
+  </settings>
+</unattend>
