@@ -1,0 +1,157 @@
+{
+  "builders": [
+    {
+      "type": "amazon-windows-ebs",
+      "region": "ap-southeast-1",
+      "source_ami": "ami-e01f3db2",
+      "instance_type": "t2.medium",
+	  "ami_name": "packer-quick-start {{timestamp}}",
+      "user_data_file":"./scripts/ec2-user-data.ps1",
+      "associate_public_ip_address":true,
+      "winrm_username": "vagrant",
+      "winrm_password": "FooBar@123",
+      "winrm_wait_timeout": "5m",
+      "winrm_port":5985,
+      "vpc_id":	"vpc-e141b084",
+      "subnet_id":"subnet-c774bfa2",
+      "security_group_id":"sg-a74d86c2",
+      "tags": {
+        "Stream":"IT Operations",
+        "Owner": "Matt Fellows",
+        "Project":"Project Mario"
+      }
+    },
+    {
+      "type": "virtualbox-windows-iso",
+      "iso_url": "/Users/mfellows/Downloads/SW_DVD5_Windows_Svr_Std_and_DataCtr_2012_R2_64Bit_English_Core_MLF_X19-05182.ISO",
+      "iso_checksum_type": "md5",
+      "iso_checksum": "83bdf8034bcb019a8f001baeeab27326",
+      "winrm_username": "vagrant",
+      "winrm_password": "vagrant",
+      "winrm_wait_timeout": "5m",
+      "winrm_port":5985,
+      "headless": false,
+      "boot_wait": "2m",
+      "guest_additions_mode": "disable",
+      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "guest_os_type": "Windows2012_64",
+      "disk_size": 61440,
+      "floppy_files": [
+        "./answer_files/2012_r2/Autounattend.xml",
+        "./scripts/microsoft-updates.bat",
+        "./scripts/win-updates.ps1",
+        "./scripts/oracle-cert.cer"
+      ],
+      "vboxmanage": [
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--memory",
+          "2048"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--cpus",
+          "2"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--natpf1",
+          "guestwinrm,tcp,127.0.0.1,5985,,5985"
+        ]
+      ]
+    },
+    {
+      "type": "virtualbox-windows-ovf",
+      "source_path": "/Users/mfellows/Downloads/output-virtualbox-iso/packer-virtualbox-iso-1417096689.ovf",
+      "headless": false,
+      "guest_additions_mode": "disable",
+      "boot_wait": "30s",
+      "winrm_username": "vagrant",
+      "winrm_password": "vagrant",
+      "winrm_wait_timeout": "5m",
+      "winrm_port":5985,
+      "winrm_host":"localhost",
+      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "http_directory":"/tmp",
+      "vboxmanage": [
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--memory",
+          "2048"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--vram",
+          "64"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--cpus",
+          "2"
+        ]
+      ]
+    }
+  ],
+   "provisioners": [
+    {
+      "type": "powershell",
+      "elevated_user": "vagrant",
+      "elevated_password": "vagrant",
+	  "environment_vars":[
+       "foo=bar",
+       "bat=bat"
+      ],
+      "inline": [
+          "echo $env:foo > c:\\foo.txt",
+          "echo $env:foo > ~/foo.txt",
+		  "echo 'should have output foo before'",
+          "echo $env:bat > bat.txt",
+          "echo $env:bat > ~/bat.txt",
+		  "echo 'should have output bat before'"
+      ]
+	},
+    {
+      "type": "powershell",
+      "elevated_user": "vagrant",
+      "elevated_password": "vagrant",
+      "inline": [
+		"$wc = New-Object System.Net.WebClient; $wc.DownloadFile(\"http://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows6.1-KB2819745-x64-MultiPkg.msu\", \"c:\\wmf4.msu\")",
+		"c:\\wmf4.msu /quiet"
+      ]
+	},
+	{
+      	"pause_before":"300s",
+		"type":"restart-windows"
+	},
+    {
+      "type": "powershell",
+      "pause_before":"300s",
+      "elevated_user": "vagrant",
+      "elevated_password": "vagrant",
+      "inline": [
+          "iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))"
+      ]
+	},
+	{
+		"type":"restart-windows"
+	},
+    {
+      "type": "powershell",
+      "elevated_user": "vagrant",
+      "elevated_password": "vagrant",
+	  "environment_vars":[
+       "foo=bar",
+       "bat=bat"
+      ],
+      "inline": [
+          "choco install netfx-4.5.2-devpack"
+      ]
+	}
+  ]
+}
