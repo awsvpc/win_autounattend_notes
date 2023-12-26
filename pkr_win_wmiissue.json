@@ -1,0 +1,144 @@
+{
+    "variables": {
+        "local_windows_iso": "iso/Windows_Svr_Std_and_DataCtr_2012_R2_64Bit.iso",
+        "iso_checksum_type": "none",
+        "iso_windowschecksum": "9A00DEFAB26A046045D939086DF78460",
+
+        "headless_mode": "false",
+
+        "file_autounattendxml": "answer_files/Autounattend.xml",
+        "file_BuildConfig": "scripts/PackerBuild_Config.ps1",
+
+        "disk_boot": "61440",
+        "disk_application": "10240",
+        "vm_memory": "4096",
+        "vm_cpus": "4",
+
+        "communicator": "winrm",
+        "winrm_username": "null",
+        "winrm_password": "null",
+        "winrm_timeout": "15m"
+
+    },
+    "builders": [{
+        "type": "vmware-iso",
+        "name": "2012r2_vmware_NoUpload",
+
+        "vm_name": "2012_R2_64Bit",
+        "vmdk_name": "2012_R2_64Bit",
+
+        "iso_url": "{{user `local_windows_iso`}}",
+        "iso_checksum_type": "{{user `iso_checksum_type`}}",
+        "iso_checksum": "{{user `iso_windowschecksum`}}",
+
+        "headless": "{{user `headless_mode`}}",
+        "boot_wait": "7m",
+
+        "communicator": "{{user `communicator`}}",
+        "winrm_username": "{{user `winrm_username`}}",
+        "winrm_password": "{{user `winrm_password`}}",
+        "winrm_timeout": "{{user `winrm_timeout`}}",
+
+        "output_directory": "c:\\vms\\Output-vmware-iso",
+        "keep_registered": "true",
+
+        "guest_os_type": "windows8srv-64",
+        "disk_size": "{{ user `disk_boot` }}",
+
+        "disk_additional_size": [
+            "{{ user `disk_application` }}"
+        ],
+        "disk_type_id": "1",
+        "vmx_data": {
+            "memsize": "{{ user `vm_memory` }}",
+            "numvcpus": "{{ user `vm_cpus` }}",
+            "scsi0.virtualDev": "lsisas1068"
+        },
+        "floppy_files": [
+            "{{user `file_autounattendxml`}}",
+            "{{user `file_BuildConfig`}}"
+        ]
+    }, {
+        "type": "vmware-iso",
+        "name": "2012r2_vmware_workstation",
+        "vm_name": "2012_R2_64Bit",
+        "vmdk_name": "2012_R2_64Bit",
+        "iso_url": "{{user `local_windows_iso`}}",
+        "iso_checksum_type": "{{user `iso_checksum_type`}}",
+        "iso_checksum": "{{user `iso_windowschecksum`}}",
+
+        "headless": "{{user `headless_mode`}}",
+        "boot_wait": "7m",
+
+        "communicator": "{{user `communicator`}}",
+        "winrm_username": "{{user `winrm_username`}}",
+        "winrm_password": "{{user `winrm_password`}}",
+        "winrm_timeout": "{{user `winrm_timeout`}}",
+
+        "output_directory": "c:\\vms\\Output-vmware-iso",
+        "keep_registered": "true",
+
+        "guest_os_type": "windows8srv-64",
+        "disk_size": "{{ user `disk_boot` }}",
+
+        "disk_additional_size": [
+            "{{ user `disk_application` }}"
+        ],
+
+        "disk_type_id": "1",
+        "vmx_data": {
+            "memsize": "{{ user `vm_memory` }}",
+            "numvcpus": "{{ user `vm_cpus` }}",
+            "scsi0.virtualDev": "lsisas1068"
+        },
+        "floppy_files": [
+            "{{user `file_autounattendxml`}}",
+            "{{user `file_BuildConfig`}}"
+        ]
+    }],
+    "provisioners": [{
+        "type": "powershell",
+        "pause_before": "30s",
+        "only": [
+            "2012r2_vmware_workstation",
+            "2012r2_vmware_NoUpload"
+        ],
+        "inline": [
+          "new-item c:\\windows\\packerfiles -itemtype Directory"
+        ]
+        },{
+        "type": "file",
+        "pause_before": "30s",
+        "only": [
+            "2012r2_vmware_workstation",
+            "2012r2_vmware_NoUpload"
+        ],
+        "source": "agents/",
+        "destination": "c:/windows/Packerfiles"
+    }, {
+        "type": "powershell",
+        "scripts": "scripts/PackerBuild_Provision.ps1",
+        "remote_path": "c:/windows/Packerfiles/PackerBuild_Provision.ps1",
+        "execute_command": "c:/windows/Packerfiles/PackerBuild_Provision.ps1",
+        "valid_exit_codes": [
+            0,
+            1
+        ]
+    }],
+    "post-processors": [{
+        "type": "vsphere",
+        "only": ["2012r2_vmware_workstation"],
+        "overwrite": "true",
+        "host": "null.infra.local",
+        "cluster": "null",
+        "datacenter": "null",
+        "datastore": "CHLNCI01_VM_01",
+        "username": "null\\drose",
+        "password": "null",
+        "vm_name": "PackerPOC",
+        "disk_mode": "thin",
+        "vm_network": "DEAD_END",
+        "insecure": "true",
+        "vm_folder": "/"
+    }]
+}
