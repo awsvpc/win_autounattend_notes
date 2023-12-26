@@ -1,0 +1,36 @@
+{
+  "builders": [
+    {
+      "vpc_id": "REDACTED",
+      "subnet_id": "REDACTED",
+      "type": "amazon-ebs",
+      "region": "us-west-2",
+      "instance_type": "t3.large",
+      "source_ami_filter": {
+        "filters": {
+          "virtualization-type": "hvm",
+          "name": "Windows_Server-2016-English-Full-Base-20*"
+        },
+        "owners": ["amazon"],
+        "most_recent": true
+      },
+      "user_data_file": "Enable-WinRM.ps1",
+      "communicator": "winrm",
+      "winrm_username": "Administrator",
+      "winrm_insecure": true,
+      "ami_name": "inspec-test_{{timestamp}}"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "inspec",
+      "backend": "winrm",
+      "host": "{{build `Host`}}",
+      "profile": "https://github.com/dev-sec/windows-baseline",
+      "user": "{{build `User`}}",
+      "extra_arguments": [
+        "--password", "\"{{build `Password`}}\""
+      ]
+    }
+  ]
+}

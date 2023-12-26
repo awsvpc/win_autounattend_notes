@@ -1,0 +1,88 @@
+amazon-ebs: output will be in this color.
+
+==> amazon-ebs: Prevalidating any provided VPC information
+==> amazon-ebs: Prevalidating AMI Name: inspec-test_1586985510
+    amazon-ebs: Found Image ID: ami-0a069e9a033cfaf89
+==> amazon-ebs: Creating temporary keypair: packer_5e977a26-8e29-93d2-329c-cecacfe0b2f4
+==> amazon-ebs: Creating temporary security group for this instance: packer_5e977a2b-8e79-e29f-7bbf-9b4a69196202
+==> amazon-ebs: Authorizing access to port 5985 from [0.0.0.0/0] in the temporary security groups...
+==> amazon-ebs: Launching a source AWS instance...
+==> amazon-ebs: Adding tags to source instance
+    amazon-ebs: Adding tag: "Name": "Packer Builder"
+    amazon-ebs: Instance ID: i-047e08b3c381d9db3
+==> amazon-ebs: Waiting for instance (i-047e08b3c381d9db3) to become ready...
+==> amazon-ebs: Waiting for auto-generated password for instance...
+    amazon-ebs: It is normal for this process to take up to 15 minutes,
+    amazon-ebs: but it usually takes around 5. Please wait.
+    amazon-ebs:
+    amazon-ebs: Password retrieved!
+==> amazon-ebs: Using winrm communicator to connect: X.X.X.X #REDACTED
+==> amazon-ebs: Waiting for WinRM to become available...
+    amazon-ebs: WinRM connected.
+==> amazon-ebs: #< CLIXML
+==> amazon-ebs: <Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04"><Obj S="progress" RefId="0"><TN RefId="0"><T>System.Management.Automation.PSCustomObject</T><T>System.Object</T></TN><MS><I64 N="SourceId">1</I64><PR N="Record"><AV>Preparing modules for first use.</AV><AI>0</AI><Nil /><PI>-1</PI><PC>-1</PC><T>Completed</T><SR>-1</SR><SD> </SD></PR></MS></Obj><Obj S="progress" RefId="1"><TNRef RefId="0" /><MS><I64 N="SourceId">1</I64><PR N="Record"><AV>Preparing modules for first use.</AV><AI>0</AI><Nil /><PI>-1</PI><PC>-1</PC><T>Completed</T><SR>-1</SR><SD> </SD></PR></MS></Obj></Objs>
+==> amazon-ebs: Connected to WinRM!
+==> amazon-ebs: Provisioning with Inspec...
+==> amazon-ebs: Executing Inspec: inspec exec https://github.com/dev-sec/windows-baseline --backend winrm --host {{.Host}} --input-file /var/folders/gq/5ynmnvt14md1bf3zndhnnbdsywqtpk/T/packer-provisioner-inspec.404943233.yml --password "Build_Password. To set this dynamically in the Packer template, you must use the `build` function"
+    amazon-ebs: [2020-04-15T15:20:14-06:00] WARN: URL target https://github.com/dev-sec/windows-baseline transformed to https://github.com/dev-sec/windows-baseline/archive/master.tar.gz. Consider using the git fetcher
+    amazon-ebs: /opt/chef-workstation/embedded/lib/ruby/2.6.0/uri/rfc3986_parser.rb:67:in `split': bad URI(is not URI?): "http://{{.Host}}:5985/wsman" (URI::InvalidURIError)
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/2.6.0/uri/rfc3986_parser.rb:73:in `parse'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/2.6.0/uri/common.rb:234:in `parse'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/winrm-2.3.4/lib/winrm/http/transport.rb:27:in `initialize'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/winrm-2.3.4/lib/winrm/http/transport.rb:149:in `initialize'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/winrm-2.3.4/lib/winrm/http/transport_factory.rb:33:in `new'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/winrm-2.3.4/lib/winrm/http/transport_factory.rb:33:in `init_negotiate_transport'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/winrm-2.3.4/lib/winrm/http/transport_factory.rb:27:in `create_transport'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/winrm-2.3.4/lib/winrm/connection.rb:80:in `transport'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/winrm-2.3.4/lib/winrm/connection.rb:74:in `shell_factory'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/winrm-2.3.4/lib/winrm/connection.rb:39:in `shell'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/train-winrm-0.2.6/lib/train-winrm/connection.rb:200:in `session'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/train-winrm-0.2.6/lib/train-winrm/connection.rb:118:in `run_command_via_connection'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/train-core-3.2.0/lib/train/plugins/base_connection.rb:130:in `run_command'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/train-core-3.2.0/lib/train/platforms/detect/helpers/os_windows.rb:9:in `check_cmd'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/train-core-3.2.0/lib/train/platforms/detect/helpers/os_windows.rb:4:in `detect_windows'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/train-core-3.2.0/lib/train/platforms/detect/specifications/os.rb:38:in `block in load'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/train-core-3.2.0/lib/train/platforms/detect/scanner.rb:46:in `instance_eval'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/train-core-3.2.0/lib/train/platforms/detect/scanner.rb:46:in `block in scan_children'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/train-core-3.2.0/lib/train/platforms/detect/scanner.rb:45:in `each'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/train-core-3.2.0/lib/train/platforms/detect/scanner.rb:45:in `scan_children'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/train-core-3.2.0/lib/train/platforms/detect/scanner.rb:60:in `scan_family_children'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/train-core-3.2.0/lib/train/platforms/detect/scanner.rb:51:in `block in scan_children'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/train-core-3.2.0/lib/train/platforms/detect/scanner.rb:45:in `each'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/train-core-3.2.0/lib/train/platforms/detect/scanner.rb:45:in `scan_children'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/train-core-3.2.0/lib/train/platforms/detect/scanner.rb:33:in `block in scan'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/train-core-3.2.0/lib/train/platforms/detect/scanner.rb:27:in `each'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/train-core-3.2.0/lib/train/platforms/detect/scanner.rb:27:in `scan'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/train-core-3.2.0/lib/train/platforms/detect.rb:9:in `scan'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/train-core-3.2.0/lib/train/plugins/base_connection.rb:116:in `platform'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/inspec-core-4.18.100/lib/inspec/resources/platform.rb:18:in `initialize'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/inspec-core-4.18.100/lib/inspec/resource.rb:119:in `block in initialize'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/inspec-core-4.18.100/lib/inspec/resource.rb:54:in `supersuper_initialize'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/inspec-core-4.18.100/lib/inspec/resource.rb:118:in `initialize'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/inspec-core-4.18.100/lib/inspec/backend.rb:21:in `new'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/inspec-core-4.18.100/lib/inspec/backend.rb:21:in `block (2 levels) in add_resource_methods'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/inspec-core-4.18.100/lib/inspec/metadata.rb:68:in `supports_platform?'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/inspec-core-4.18.100/lib/inspec/profile.rb:148:in `initialize'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/inspec-core-4.18.100/lib/inspec/profile.rb:60:in `new'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/inspec-core-4.18.100/lib/inspec/profile.rb:60:in `for_path'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/inspec-core-4.18.100/lib/inspec/profile.rb:67:in `for_fetcher'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/inspec-core-4.18.100/lib/inspec/profile.rb:73:in `for_target'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/inspec-core-4.18.100/lib/inspec/runner.rb:192:in `add_target'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/inspec-core-4.18.100/lib/inspec/cli.rb:287:in `block in exec'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/inspec-core-4.18.100/lib/inspec/cli.rb:287:in `each'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/inspec-core-4.18.100/lib/inspec/cli.rb:287:in `exec'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/thor-0.20.3/lib/thor/command.rb:27:in `run'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/thor-0.20.3/lib/thor/invocation.rb:126:in `invoke_command'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/thor-0.20.3/lib/thor.rb:387:in `dispatch'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/thor-0.20.3/lib/thor/base.rb:466:in `start'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/inspec-core-4.18.100/lib/inspec/base_cli.rb:35:in `start'
+    amazon-ebs:         from /opt/chef-workstation/embedded/lib/ruby/gems/2.6.0/gems/inspec-bin-4.18.100/bin/inspec:11:in `<top (required)>'
+    amazon-ebs:         from /opt/chef-workstation/bin/inspec:362:in `load'
+    amazon-ebs:         from /opt/chef-workstation/bin/inspec:362:in `<main>'
+==> amazon-ebs: Provisioning step had errors: Running the cleanup provisioner, if present...
+==> amazon-ebs: Terminating the source AWS instance...
+==> amazon-ebs: Cleaning up any extra volumes...
+==> amazon-ebs: No volumes to clean up, skipping
+==> amazon-ebs: Deleting temporary security group...
+==> amazon-ebs: Deleting temporary keypair...
+Build 'amazon-ebs' errored: Error executing Inspec: Non-zero exit status: exit status 1
